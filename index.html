@@ -321,6 +321,10 @@
     .ai-img {
       width: 260px;
     }
+    /* 新加的左侧配图：进一步缩小，避免和右边大图抢视觉重心 */
+    .ai-img-sm {
+      width: 140px;
+    }
     /* 「AI大人的话」图片行：让两张图片左右并排显示 */
     .ai-row {
       display: flex;
@@ -564,7 +568,7 @@
         <div class="figure">
           <!-- 两张图左右并排：左边是新加的图，右边是原来的「AI大人的话」 -->
           <div class="ai-row">
-            <img class="ai-img" src="06fa4b98632c083bcc5cddeec5a0aa2e470631538.png" alt="AI大人配图" />
+            <img class="ai-img ai-img-sm" src="06fa4b98632c083bcc5cddeec5a0aa2e470631538.png" alt="AI大人配图" />
             <img class="ai-img" src="无标题.jpg" alt="AI大人的话" />
           </div>
           <div class="caption">AI大人的话</div>
