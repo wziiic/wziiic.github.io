@@ -321,6 +321,13 @@
     .ai-img {
       width: 260px;
     }
+    /* 「AI大人的话」图片行：让两张图片左右并排显示 */
+    .ai-row {
+      display: flex;
+      align-items: center;    /* 两张图垂直方向居中对齐 */
+      justify-content: center; /* 整体水平居中 */
+      gap: 20px;              /* 两张图之间的间距 */
+    }
 
     /* ================= 底部导航 ================= */
     .nav {
@@ -378,6 +385,7 @@
       .ending-img { width: 100%; max-width: 260px; }
       .work-row { flex-direction: column; } /* 手机窄屏：图片移到文字上方 */
       .work-figure { width: 100%; max-width: 260px; }
+      .ai-row { flex-direction: column; } /* 手机窄屏：两张图上下堆叠，避免太挤 */
     }
   </style>
 </head>
@@ -554,7 +562,11 @@
 
         <!-- 结尾下方：图片 + 配文 -->
         <div class="figure">
-          <img class="ai-img" src="无标题.jpg" alt="AI大人的话" />
+          <!-- 两张图左右并排：左边是新加的图，右边是原来的「AI大人的话」 -->
+          <div class="ai-row">
+            <img class="ai-img" src="06fa4b98632c083bcc5cddeec5a0aa2e470631538.png" alt="AI大人配图" />
+            <img class="ai-img" src="无标题.jpg" alt="AI大人的话" />
+          </div>
           <div class="caption">AI大人的话</div>
         </div>
 
