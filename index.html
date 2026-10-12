@@ -636,7 +636,12 @@
       pointer-events: none;   /* 不拦截点击 */
       transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .coin-counter .coin-ico { font-size: 20px; line-height: 1; }
+    .coin-counter .coin-ico {
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;             /* 行内元素设为 inline-block，filter 才能稳定改色 */
+      filter: hue-rotate(295deg) saturate(0.85); /* 金色硬币调成粉色，和散落货币一致 */
+    }
     .coin-counter .coin-num { font-size: 18px; min-width: 20px; text-align: center; }
     /* 收到币时计数器“弹一下” */
     .coin-counter.pop { transform: scale(1.25); }
