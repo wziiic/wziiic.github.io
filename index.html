@@ -641,21 +641,26 @@
       pointer-events: none;
       overflow: hidden;
     }
-    /* 单个网页币：可点击收集，带缓慢上下漂浮动画 */
+    /* 单个网页币：可点击收集，带缓慢上下漂浮动画（粉色圆片，和网页风格统一） */
     .coin {
       position: absolute;
       width: 46px;
       height: 46px;
       border: none;
-      background: radial-gradient(circle at 35% 30%, #ffe9a8, #f5c542 70%);
+      background: radial-gradient(circle at 35% 30%, #ffd0df, var(--accent-2) 75%);
       border-radius: 50%;
       font-size: 26px;
       line-height: 46px;
       text-align: center;
       cursor: pointer;
       pointer-events: auto;   /* 货币本身可点击 */
-      box-shadow: 0 4px 14px rgba(210, 160, 40, 0.45), inset 0 -3px 6px rgba(180, 130, 20, 0.35);
+      box-shadow: 0 4px 14px rgba(255, 92, 138, 0.45), inset 0 -3px 6px rgba(224, 84, 130, 0.35);
       animation: coinFloat 3s ease-in-out infinite;
+    }
+    /* 把金色硬币 emoji 调成粉色，避免和粉色圆片不搭 */
+    .coin .coin-emoji {
+      display: inline-block;
+      filter: hue-rotate(295deg) saturate(0.85);
     }
     .coin:hover { transform: scale(1.15); }
     @keyframes coinFloat {
@@ -1201,7 +1206,7 @@
         }
         const coin = document.createElement('button');
         coin.className = 'coin';
-        coin.textContent = '🪙';
+        coin.innerHTML = '<span class="coin-emoji">🪙</span>'; // 包一层，方便单独把硬币调成粉色
         coin.style.left = x + 'px';
         coin.style.top = y + 'px';
         coin.style.animationDelay = (Math.random() * 2.5).toFixed(2) + 's'; // 漂浮节奏错开
