@@ -1091,14 +1091,9 @@
     const extraTab = document.getElementById('extraTab');
 
     // ============ 网页币系统：散落收集 + 购买解锁 ============
-    // 用 localStorage 记住“已收集的币数”和“已解锁的条目”，刷新页面后不会丢
-    let webCoins = Number(localStorage.getItem('web_coins') || 0);
-    let unlockedApps = [];
-    try {
-      unlockedApps = JSON.parse(localStorage.getItem('unlocked_apps') || '[]');
-    } catch (e) { unlockedApps = []; }
-    function saveCoins() { localStorage.setItem('web_coins', String(webCoins)); }
-    function saveUnlocked() { localStorage.setItem('unlocked_apps', JSON.stringify(unlockedApps)); }
+    // 每次打开网页都从 0 币、全部锁定的新状态开始（不持久化，刷新即重新来一局）
+    let webCoins = 0;      // 当前拥有的网页币数量
+    let unlockedApps = []; // 本次会话里已经解锁的条目名
     // 判断某个“已填写内容”是否已解锁（只对文字条目生效，图片和占位符不参与）
     function isUnlocked(app) { return unlockedApps.includes(app.label); }
 
@@ -1153,11 +1148,9 @@
       closeBuyModal();
 
       webCoins -= 1;          // 扣掉一个网页币
-      saveCoins();
       updateCounter();
 
       unlockedApps.push(app.label); // 标记为已解锁
-      saveUnlocked();
 
       // 解锁动画：锁先旋转、甩开，再换成真实 emoji、恢复彩色背景
       icon.classList.add('unlocking');
@@ -1191,7 +1184,7 @@
     });
 
     // 在页面空白处随机撒网页币（避开中心球体/卡片和上下导航）
-    const COIN_COUNT = 20; // 散落的网页币数量
+    const COIN_COUNT = REAL_APPS.length; // 散落币数 = 已填写内容数，刚好够全部解锁
     function scatterCoins() {
       const vw = window.innerWidth;
       const vh = window.innerHeight;
@@ -1238,7 +1231,6 @@
       setTimeout(() => flyer.remove(), 700);
 
       webCoins += 1; // 币数 +1
-      saveCoins();
       updateCounter();
       setTimeout(() => coin.remove(), 420); // 原币短暂动画后移除
     }
