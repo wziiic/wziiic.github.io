@@ -456,6 +456,24 @@
       color: var(--text-sub);
       letter-spacing: 1px;
     }
+    /* “快速导航”标题右侧的小标签：提示“有图标的是可解锁内容” */
+    .apps-title h2 .unlock-tip {
+      display: inline-block;       /* 让胶囊按内容撑开，紧跟在标题文字右侧 */
+      margin-left: 12px;           /* 与“快速导航”四个字之间留一点距离 */
+      padding: 3px 11px;           /* 胶囊内边距，让文字不贴边 */
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #b78ba0;
+      /* 父级 h2 用了“文字渐变透明”效果，这里要恢复成普通实色，否则字会看不见 */
+      -webkit-text-fill-color: #b78ba0;
+      background: rgba(255, 255, 255, 0.7);
+      background-clip: border-box;
+      -webkit-background-clip: border-box;
+      border: 1px solid rgba(183, 139, 160, 0.45);
+      border-radius: 999px;        /* 大圆角做出胶囊形状 */
+      vertical-align: middle;      /* 让胶囊和标题文字在垂直方向上居中对齐 */
+    }
 
     /* 点击图标后：球体弹性缩小（用“回弹”曲线，缩小时会轻微回弹） */
     .apps-grid {
@@ -695,7 +713,7 @@
       <div class="apps-page">
         <!-- 顶部标题（不挡住下面的图标点击） -->
         <div class="apps-title">
-          <h2>🚀 快速导航</h2>
+          <h2>🚀 快速导航<span class="unlock-tip">有图标的是可解锁内容</span></h2>
           <p>按住左键拖动旋转 · 点图标查看内容</p>
         </div>
         <!-- 图标网格：由 JS 动态生成 -->
