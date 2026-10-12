@@ -608,6 +608,165 @@
       transform: scale(1.02);
     }
 
+    /* ================= 网页币系统（散落收集 + 购买解锁） ================= */
+    /* 右上角计数器：显示当前网页币数量 */
+    .coin-counter {
+      position: fixed;
+      top: 18px;
+      right: 20px;
+      z-index: 6000;          /* 盖在页面内容之上 */
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 140, 175, 0.4);
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(200, 120, 155, 0.25);
+      font-weight: 800;
+      color: var(--text-main);
+      pointer-events: none;   /* 不拦截点击 */
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .coin-counter .coin-ico { font-size: 20px; line-height: 1; }
+    .coin-counter .coin-num { font-size: 18px; min-width: 20px; text-align: center; }
+    /* 收到币时计数器“弹一下” */
+    .coin-counter.pop { transform: scale(1.25); }
+
+    /* 货币散落层：铺满全屏，但本身不拦截点击 */
+    .coins-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    /* 单个网页币：可点击收集，带缓慢上下漂浮动画 */
+    .coin {
+      position: absolute;
+      width: 46px;
+      height: 46px;
+      border: none;
+      background: radial-gradient(circle at 35% 30%, #ffe9a8, #f5c542 70%);
+      border-radius: 50%;
+      font-size: 26px;
+      line-height: 46px;
+      text-align: center;
+      cursor: pointer;
+      pointer-events: auto;   /* 货币本身可点击 */
+      box-shadow: 0 4px 14px rgba(210, 160, 40, 0.45), inset 0 -3px 6px rgba(180, 130, 20, 0.35);
+      animation: coinFloat 3s ease-in-out infinite;
+    }
+    .coin:hover { transform: scale(1.15); }
+    @keyframes coinFloat {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+    /* 点击收集瞬间：原地放大并淡出 */
+    .coin.collected {
+      animation: coinGot 0.4s ease forwards;
+      pointer-events: none;
+    }
+    @keyframes coinGot {
+      0%   { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    /* 飞向计数器的“飞行币”克隆 */
+    .coin.fly {
+      position: fixed;
+      margin: 0;
+      animation: none;
+      transition: transform 0.65s cubic-bezier(0.3, 0.9, 0.4, 1), opacity 0.65s ease;
+      pointer-events: none;
+      z-index: 6500;
+    }
+
+    /* 未解锁的网格：锁居中显示、整体灰暗 */
+    .app-icon.locked .app-emoji {
+      font-size: 26px;
+      filter: grayscale(1);
+    }
+    .app-icon.locked .app-label {
+      color: #efe9ec;
+      text-shadow: none;
+    }
+    /* 解锁瞬间：锁旋转甩开、图标弹一下并发出金光 */
+    @keyframes unlockSpin {
+      0%   { transform: scale(1) rotate(0deg); }
+      45%  { transform: scale(1.35) rotate(-18deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    .app-icon.unlocking {
+      animation: unlockSpin 0.62s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 26px rgba(255, 200, 90, 0.85);
+    }
+
+    /* 购买确认弹窗：半透明遮罩 + 居中卡片 */
+    .buy-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(70, 45, 60, 0.35);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .buy-modal.show { opacity: 1; pointer-events: auto; }
+    .buy-card {
+      width: min(340px, 84vw);
+      padding: 26px 24px;
+      text-align: center;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(120, 80, 100, 0.35);
+      transform: translateY(20px) scale(0.92);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .buy-modal.show .buy-card { transform: translateY(0) scale(1); }
+    .buy-title { font-size: 20px; font-weight: 800; color: var(--text-main); }
+    .buy-desc { margin: 14px 0 20px; font-size: 14px; color: var(--text-sub); line-height: 1.7; }
+    .buy-desc b { color: var(--accent-2); }
+    .buy-btns { display: flex; gap: 12px; }
+    .buy-btn {
+      flex: 1;
+      padding: 11px 0;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: filter 0.2s ease, transform 0.2s ease;
+    }
+    .buy-cancel { background: #efe7ec; color: var(--text-sub); }
+    .buy-ok { background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); color: #fff; }
+    .buy-btn:hover { filter: brightness(1.05); transform: scale(1.03); }
+
+    /* 轻提示条：从底部滑出，几秒后自动消失 */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 96px;
+      transform: translate(-50%, 20px);
+      z-index: 11000;
+      padding: 12px 22px;
+      background: rgba(74, 53, 80, 0.92);
+      color: #fff;
+      font-size: 14px;
+      letter-spacing: 1px;
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(60, 40, 60, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
     /* ================= 底部导航 ================= */
     .nav {
       position: fixed;
@@ -746,6 +905,34 @@
     </div>
     <button id="nextBtn" title="下一页">›</button>
   </nav>
+
+  <!-- ================= 网页币系统 ================= -->
+  <!-- 右上角计数器：显示当前拥有的网页币数量 -->
+  <div class="coin-counter" id="coinCounter">
+    <span class="coin-ico">🪙</span>
+    <span class="coin-num" id="coinNum">0</span>
+  </div>
+
+  <!-- 散落在页面空白处的可收集网页币（由 JS 随机撒） -->
+  <div class="coins-layer" id="coinsLayer"></div>
+
+  <!-- 购买解锁的确认弹窗 -->
+  <div class="buy-modal" id="buyModal">
+    <div class="buy-card">
+      <div class="buy-title">🔒 支付一个网页币</div>
+      <div class="buy-desc">
+        解锁「<b id="buyLabel"></b>」需要支付 <b>1</b> 个网页币<br />
+        你当前拥有 🪙 <b id="buyCoins"></b> 个
+      </div>
+      <div class="buy-btns">
+        <button class="buy-btn buy-cancel" id="buyCancel">取消</button>
+        <button class="buy-btn buy-ok" id="buyOk">确认支付</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 轻提示条（用于“网页币不足”等短消息） -->
+  <div class="toast" id="toast"></div>
 
   <script>
     // ============ 页面切换逻辑 ============
@@ -903,6 +1090,166 @@
     const extraBody = document.getElementById('extraBody');
     const extraTab = document.getElementById('extraTab');
 
+    // ============ 网页币系统：散落收集 + 购买解锁 ============
+    // 用 localStorage 记住“已收集的币数”和“已解锁的条目”，刷新页面后不会丢
+    let webCoins = Number(localStorage.getItem('web_coins') || 0);
+    let unlockedApps = [];
+    try {
+      unlockedApps = JSON.parse(localStorage.getItem('unlocked_apps') || '[]');
+    } catch (e) { unlockedApps = []; }
+    function saveCoins() { localStorage.setItem('web_coins', String(webCoins)); }
+    function saveUnlocked() { localStorage.setItem('unlocked_apps', JSON.stringify(unlockedApps)); }
+    // 判断某个“已填写内容”是否已解锁（只对文字条目生效，图片和占位符不参与）
+    function isUnlocked(app) { return unlockedApps.includes(app.label); }
+
+    const coinCounter = document.getElementById('coinCounter');
+    const coinNum = document.getElementById('coinNum');
+    const coinsLayer = document.getElementById('coinsLayer');
+    const buyModal = document.getElementById('buyModal');
+    const buyLabel = document.getElementById('buyLabel');
+    const buyCoins = document.getElementById('buyCoins');
+    const buyCancel = document.getElementById('buyCancel');
+    const buyOk = document.getElementById('buyOk');
+    const toast = document.getElementById('toast');
+
+    // 刷新右上角计数器的数字，并播放“弹一下”动画
+    function updateCounter() {
+      coinNum.textContent = webCoins;
+      coinCounter.classList.remove('pop');
+      void coinCounter.offsetWidth; // 强制重排，让动画每次都能重新触发
+      coinCounter.classList.add('pop');
+    }
+
+    // 轻提示条：底部滑出，约 2.4 秒后自动消失
+    let toastTimer = null;
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    // 当前正在被购买的条目（点击“确认支付”后用它们完成解锁）
+    let buyingApp = null, buyingIcon = null;
+
+    // 打开购买确认弹窗
+    function openBuyModal(app, icon) {
+      buyingApp = app;
+      buyingIcon = icon;
+      buyLabel.textContent = app.label;
+      buyCoins.textContent = webCoins;
+      buyModal.classList.add('show');
+    }
+    function closeBuyModal() {
+      buyModal.classList.remove('show');
+      buyingApp = null;
+      buyingIcon = null;
+    }
+
+    // 点击“确认支付”：扣 1 币 → 解锁 → 播放衔接动画（自动弹出详情卡）
+    function doUnlock() {
+      if (!buyingApp || !buyingIcon) return;
+      const app = buyingApp, icon = buyingIcon;
+      closeBuyModal();
+
+      webCoins -= 1;          // 扣掉一个网页币
+      saveCoins();
+      updateCounter();
+
+      unlockedApps.push(app.label); // 标记为已解锁
+      saveUnlocked();
+
+      // 解锁动画：锁先旋转、甩开，再换成真实 emoji、恢复彩色背景
+      icon.classList.add('unlocking');
+      setTimeout(() => {
+        const c = icon._color; // 创建图标时保存的配色
+        icon.style.background = `linear-gradient(135deg, ${c[0]}, ${c[1]})`;
+        icon.querySelector('.app-emoji').textContent = app.emoji;
+        icon.classList.remove('locked');
+      }, 380);
+      // 衔接动画：解锁完成后，自动弹出该条目的详情卡
+      setTimeout(() => {
+        icon.classList.remove('unlocking');
+        openDetail(app);
+      }, 680);
+    }
+
+    // 尝试购买：币不够就提示去收集，币够就弹确认框
+    function tryBuy(app, icon) {
+      if (webCoins < 1) {
+        showToast('🪙 网页币不足，去页面空白处收集网页币吧！');
+        return;
+      }
+      openBuyModal(app, icon);
+    }
+
+    buyCancel.addEventListener('click', closeBuyModal);
+    buyOk.addEventListener('click', doUnlock);
+    // 点遮罩空白处也能取消
+    buyModal.addEventListener('click', (e) => {
+      if (e.target === buyModal) closeBuyModal();
+    });
+
+    // 在页面空白处随机撒网页币（避开中心球体/卡片和上下导航）
+    const COIN_COUNT = 20; // 散落的网页币数量
+    function scatterCoins() {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const S = Math.min(vw, vh);
+      for (let i = 0; i < COIN_COUNT; i++) {
+        let x = 0, y = 0, ok = false;
+        // 反复随机，直到落到中心内容区之外的空白处
+        for (let t = 0; t < 60 && !ok; t++) {
+          x = vw * (0.06 + Math.random() * 0.88);
+          y = vh * (0.10 + Math.random() * 0.76);
+          const dx = x - vw / 2;
+          const dy = y - vh / 2;
+          if (Math.sqrt(dx * dx + dy * dy) > S * 0.52 && y > 90 && y < vh - 90) ok = true;
+        }
+        const coin = document.createElement('button');
+        coin.className = 'coin';
+        coin.textContent = '🪙';
+        coin.style.left = x + 'px';
+        coin.style.top = y + 'px';
+        coin.style.animationDelay = (Math.random() * 2.5).toFixed(2) + 's'; // 漂浮节奏错开
+        coin.addEventListener('click', () => collectCoin(coin));
+        coinsLayer.appendChild(coin);
+      }
+    }
+
+    // 收集网页币：币原地消失 + 一个“飞行币”飞向右上角计数器
+    function collectCoin(coin) {
+      coin.classList.add('collected');
+      const from = coin.getBoundingClientRect();
+      const to = coinCounter.getBoundingClientRect();
+
+      // 克隆一个币，从原位置飞向计数器
+      const flyer = coin.cloneNode(true);
+      flyer.classList.remove('collected');
+      flyer.classList.add('fly');
+      flyer.style.left = from.left + 'px';
+      flyer.style.top = from.top + 'px';
+      document.body.appendChild(flyer);
+      // 下一帧再设置终点，浏览器才会播放过渡动画
+      requestAnimationFrame(() => {
+        flyer.style.transform = `translate(${to.left - from.left + (to.width - from.width) / 2}px, ${to.top - from.top + (to.height - from.height) / 2}px) scale(0.25)`;
+        flyer.style.opacity = '0.2';
+      });
+      setTimeout(() => flyer.remove(), 700);
+
+      webCoins += 1; // 币数 +1
+      saveCoins();
+      updateCounter();
+      setTimeout(() => coin.remove(), 420); // 原币短暂动画后移除
+    }
+
+    updateCounter();      // 页面加载时先显示已有的币数
+    scatterCoins();       // 撒币
+    window.addEventListener('resize', () => {
+      coinsLayer.innerHTML = ''; // 窗口变化时清空重撒，避免币跑到屏幕外
+      scatterCoins();
+    });
+
     const BASE = 80; // 图标基准尺寸，要和 CSS 里 .app-slot 的宽高一致
 
     // 逐个创建图标（定位槽 + 圆形图标）
@@ -913,22 +1260,36 @@
 
       const icon = document.createElement('button');
       icon.className = 'app-icon';
+      // 只有“已填写内容”（文字条目）需要解锁；图片和占位符不参与锁定
+      const lockable = !app.placeholder && !app.image;
+      const locked = lockable && !isUnlocked(app);
+
       if (app.image) {
-        // 图片卡片：只有圆形缩略图，不带文字标签
+        // 图片卡片：只有圆形缩略图，不带文字标签，也不上锁
         icon.classList.add('app-icon-pic');
         icon.innerHTML = `<img class="app-pic" src="${app.src}" alt="配图" />`;
       } else {
         const c = NAV_COLORS[i % NAV_COLORS.length];
-        icon.style.background = `linear-gradient(135deg, ${c[0]}, ${c[1]})`; // 逐个上低饱和色
-        icon.innerHTML = `<span class="app-emoji">${app.emoji}</span>` + (app.label ? `<span class="app-label">${app.label}</span>` : '');
+        icon._color = c; // 记住配色，解锁时要恢复彩色
+        if (locked) {
+          // 未解锁：背景灰暗 + 中间显示锁，名字保留（让人知道要解锁什么）
+          icon.style.background = 'linear-gradient(135deg, #c9c2c6, #a99fa4)';
+          icon.classList.add('locked');
+          icon.innerHTML = `<span class="app-emoji">🔒</span>` + (app.label ? `<span class="app-label">${app.label}</span>` : '');
+        } else {
+          icon.style.background = `linear-gradient(135deg, ${c[0]}, ${c[1]})`; // 逐个上低饱和色
+          icon.innerHTML = `<span class="app-emoji">${app.emoji}</span>` + (app.label ? `<span class="app-label">${app.label}</span>` : '');
+        }
       }
 
-      // 点击：先播放图标自身的小跳动；只有真实文字条目才缩小球体、弹出详情框
+      // 点击：先播放图标自身的小跳动
       // （占位图标和图片卡片都属于“尚未填写内容”，点击只跳动、不弹详情卡）
       icon.addEventListener('click', () => {
         slot.classList.add('bounce');
         setTimeout(() => slot.classList.remove('bounce'), 500);
-        if (!app.placeholder && !app.image) openDetail(app);
+        if (app.placeholder || app.image) return; // 占位符和图片只跳动
+        if (isUnlocked(app)) openDetail(app);      // 已解锁 → 直接看内容
+        else tryBuy(app, icon);                    // 未解锁 → 走购买流程
       });
 
       slot.appendChild(icon);
